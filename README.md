@@ -38,6 +38,8 @@ cd Cloud-Studio-Chat
 g++ client.cpp -o client.exe -mwindows -lws2_32
 ```
 
+你也可以用目录下的[compile.bat](compile.bat)文件，直接运行它来进行编译。
+
 ## 使用方法
 
 编译成功后，你就可以运行可执行文件。
