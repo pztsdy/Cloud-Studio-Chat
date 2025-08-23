@@ -1,5 +1,6 @@
 #define UNICODE
 #define _UNICODE
+
 #include <winsock2.h>
 #include <windows.h>
 #include <string>
@@ -7,7 +8,6 @@
 #include <commctrl.h>
 #include <iostream>
 
-// version
 #define VERSION L"1.10.4"
 const std::wstring client_name = L"Cloud Studio 聊天室";
 
@@ -63,7 +63,7 @@ HFONT CreateCustomFont()
         CLIP_DEFAULT_PRECIS,         // 剪裁精度
         CLEARTYPE_NATURAL_QUALITY,   // 抗锯齿
         DEFAULT_PITCH | FF_DONTCARE, // 字符集和间距
-        L"Segoe UI Light"            // 字体名称
+        L"Microsoft YaHei"            // 字体名称
     );
 }
 

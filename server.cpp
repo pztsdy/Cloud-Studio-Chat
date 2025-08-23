@@ -186,7 +186,7 @@ int main()
                           << "helpqwq               - Show this help\n"
                           << "exit                  - Shut down the server\n";
             } else if (cmd == "exit" || cmd == "quit") {
-                broadcastMessage("服务器已经关闭了哦~");
+                broadcastMessage("Server closed.");
                 std::cout << "Shutting down server..." << std::endl;
                 WSACleanup();
                 exit(0);
