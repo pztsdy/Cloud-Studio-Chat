@@ -8,7 +8,7 @@
 #include <commctrl.h>
 #include <iostream>
 
-#define VERSION L"1.1"
+#define VERSION L"1.2"
 const std::wstring client_name = L"Cloud Studio Chat";
 
 #pragma comment(lib, "ws2_32.lib")

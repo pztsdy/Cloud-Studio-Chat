@@ -1,22 +1,41 @@
+#ifdef _WIN32
 #define UNICODE
 #define _UNICODE
+#include <winsock2.h>
+#pragma comment(lib, "ws2_32.lib")
+#else
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+typedef int SOCKET;
+#define INVALID_SOCKET -1
+#define SOCKET_ERROR -1
+#define closesocket(s) close(s)
+#endif
 
 #include <iostream>
 #include <string>
 #include <vector>
 #include <thread>
 #include <mutex>
-#include <winsock2.h>
 #include <algorithm>
 #include <map>
 
-#pragma comment(lib, "ws2_32.lib")
+// 函数声明
+void broadcastMessage(const std::string &message);
+void sendAdminMessage(const std::string &message);
+void kickUser(const std::string &identifier);
+void runServerCommands();
+bool initializeNetwork();
+void cleanupNetwork();
+
 std::vector<SOCKET> clients;
 std::mutex clients_mutex;
 std::map<SOCKET, std::pair<std::string, int>> clientInfo; // 存储用户名和 ID
 int nextClientId = 1;                                     // 用于分配唯一 ID
 
-const std::string VERSION = "1.1";
+const std::string VERSION = "1.2";
 const std::string SERVER_NAME = "Cloud Studio Chat";
 
 // 获取在线人数
@@ -29,7 +48,7 @@ int getOnlineFriends()
 void broadcastMessage(const std::string &message)
 {
     // 在服务端控制台输出消息
-    std::cout << "[MESSAGE]: \n" << message << "\n>  " << std::flush;
+    std::cout << message << "\n>  " << std::flush;
     std::lock_guard<std::mutex> guard(clients_mutex);
     for (SOCKET client : clients)
     {
@@ -104,116 +123,196 @@ void handleClient(SOCKET clientSocket)
     {
         buffer[bytesReceived] = '\0';
         std::string message(buffer);
+        // 去除末尾换行和回车
+        while (!message.empty() && (message.back() == '\n' || message.back() == '\r'))
+        {
+            message.pop_back();
+        }
+
+        if (message.empty())
+        {
+            continue;
+        }
 
         if (message == "/list")
         {
             listOnlineFriends(clientSocket);
         }
-        else if (message.rfind("/kick ", 0) == 0)
+        else if (message.rfind("/kick ", 0) == 0) // 恢复客户端的 /kick 命令处理
         {
             std::string identifier = message.substr(6);
             kickUser(identifier);
         }
-        else if (message.rfind("/adminmsg ", 0) == 0)
+        else if (message.rfind("/adminmsg ", 0) == 0) // 恢复客户端的 /adminmsg 命令处理
         {
             std::string adminMessage = message.substr(10);
             sendAdminMessage(adminMessage);
         }
         else
         {
+            // 客户端已自行格式化消息，直接广播
             broadcastMessage(message);
         }
     }
 
+    // 客户端断开连接
+    std::string disconnected_username;
+    {
+        std::lock_guard<std::mutex> guard(clients_mutex);
+        auto it = clientInfo.find(clientSocket);
+        if (it != clientInfo.end())
+        {
+            disconnected_username = it->second.first;
+            clientInfo.erase(it);
+        }
+        clients.erase(std::remove(clients.begin(), clients.end(), clientSocket), clients.end());
+    }
     closesocket(clientSocket);
-    std::lock_guard<std::mutex> guard(clients_mutex);
-    clients.erase(std::remove(clients.begin(), clients.end(), clientSocket), clients.end());
-    clientInfo.erase(clientSocket);
+
+    if (!disconnected_username.empty())
+    {
+        broadcastMessage(disconnected_username + " has left.");
+    }
 }
 
-// 接收到获取人数的请求
-void handleOnlineFriends(SOCKET clientSocket)
+bool initializeNetwork()
 {
-    int onlineFriends = getOnlineFriends();
-    std::string message = std::to_string(onlineFriends);
-    send(clientSocket, message.c_str(), message.size(), 0);
+#ifdef _WIN32
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+    {
+        std::cerr << "WSAStartup failed." << std::endl;
+        return false;
+    }
+#endif
+    return true;
+}
+
+void cleanupNetwork()
+{
+#ifdef _WIN32
+    WSACleanup();
+#endif
+}
+
+void runServerCommands()
+{
+    std::string cmd;
+    while (true)
+    {
+        std::cout << ">  " << std::flush;
+        std::getline(std::cin, cmd);
+        if (cmd == "list")
+        {
+            std::lock_guard<std::mutex> guard(clients_mutex);
+            std::cout << "Online Users:" << std::endl;
+            for (const auto &client : clientInfo)
+            {
+                std::cout << "Username: " << client.second.first
+                          << ", ID: " << client.second.second
+                          << ", Socket: " << client.first << std::endl;
+            }
+        }
+        else if (cmd.rfind("kick ", 0) == 0)
+        {
+            std::string identifier = cmd.substr(5);
+            kickUser(identifier);
+            std::cout << "Kick command sent for: " << identifier << std::endl;
+        }
+        else if (cmd.rfind("adminmsg ", 0) == 0)
+        {
+            std::string msg = cmd.substr(9);
+            sendAdminMessage(msg);
+            std::cout << "Admin message sent." << std::endl;
+        }
+        else if (cmd == "helpqwq")
+        {
+            std::cout << "Commands:\n"
+                      << "list                  - Show online users\n"
+                      << "kick <name|id>        - Kick user by name or id\n"
+                      << "adminmsg <message>    - Broadcast admin message\n"
+                      << "helpqwq               - Show this help\n"
+                      << "exit/quit             - Shut down the server\n"
+                      << "about                 - Show about message.\n";
+        }
+        else if (cmd == "exit" || cmd == "quit")
+        {
+            broadcastMessage("Server is closed.");
+            std::cout << "Shutting down server..." << std::endl;
+            cleanupNetwork();
+            exit(0);
+        }
+        else if (cmd.rfind("about", 0) == 0)
+        {
+            std::cout << SERVER_NAME << "\nVersion: " << VERSION << std::endl;
+        }
+        else if (!cmd.empty())
+        {
+            std::cout << "Unknown command: " << cmd << std::endl
+                      << "Use 'helpqwq' to view help" << std::endl;
+        }
+    }
 }
 
 int main()
 {
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (!initializeNetwork())
+    {
+        return 1;
+    }
 
     SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSocket == INVALID_SOCKET)
+    {
+        std::cerr << "Socket creation failed." << std::endl;
+        cleanupNetwork();
+        return 1;
+    }
+
     sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(6543);
     serverAddr.sin_addr.s_addr = INADDR_ANY;
 
-    bind(serverSocket, (sockaddr *)&serverAddr, sizeof(serverAddr));
-    listen(serverSocket, 5);
+    if (bind(serverSocket, (sockaddr *)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
+    {
+        std::cerr << "Bind failed." << std::endl;
+        closesocket(serverSocket);
+        cleanupNetwork();
+        return 1;
+    }
+
+    if (listen(serverSocket, 5) == SOCKET_ERROR)
+    {
+        std::cerr << "Listen failed." << std::endl;
+        closesocket(serverSocket);
+        cleanupNetwork();
+        return 1;
+    }
 
     std::cout << "Server started on port 6543" << std::endl;
 
     // 服务端命令线程
-    std::thread([]()
-                {
-        std::string cmd;
-        while (true) {
-            std::cout << ">  " << std::flush;
-            std::getline(std::cin, cmd);
-            if (cmd == "list") {
-                std::lock_guard<std::mutex> guard(clients_mutex);
-                std::cout << "Online Users:" << std::endl;
-                for (const auto &client : clientInfo) {
-                    std::cout << "Username: " << client.second.first
-                              << ", ID: " << client.second.second
-                              << ", Socket: " << client.first << std::endl;
-                }
-                continue;
-            } else if (cmd.rfind("kick ", 0) == 0) {
-                std::string identifier = cmd.substr(5);
-                kickUser(identifier);
-                std::cout << "Kick command sent for: " << identifier << std::endl;
-                continue;
-            } else if (cmd.rfind("adminmsg ", 0) == 0) {
-                std::string msg = cmd.substr(9);
-                sendAdminMessage(msg);
-                std::cout << "Admin message sent." << std::endl;
-                continue;
-            } else if (cmd == "helpqwq") {
-                std::cout << "Commands:\n"
-                          << "list                  - Show online users\n"
-                          << "kick <name|id>        - Kick user by name or id\n"
-                          << "adminmsg <message>    - Broadcast admin message\n"
-                          << "helpqwq               - Show this help\n"
-                          << "exit/quit             - Shut down the server\n"
-                          << "about                 - Show about message.\n";
-                continue;
-            } else if (cmd == "exit" || cmd == "quit") {
-                broadcastMessage("Server is closed.");
-                std::cout << "Shutting down server..." << std::endl;
-                WSACleanup();
-                exit(0);
-                return 0;
-            } else if (cmd.rfind("about", 0) == 0) {
-                std::cout << SERVER_NAME << "\nVersion: " << VERSION << std::endl << std::flush;
-                continue;
-            }
-            std::cout << "Unknown command: " << cmd << std::endl << "Use 'helpqwq' to view help" << std::endl << std::flush;
-
-        } })
-        .detach();
+    std::thread(runServerCommands).detach();
 
     while (true)
     {
         SOCKET clientSocket = accept(serverSocket, nullptr, nullptr);
-        std::lock_guard<std::mutex> guard(clients_mutex);
-        clients.push_back(clientSocket);
+        if (clientSocket == INVALID_SOCKET)
+        {
+            std::cerr << "Accept failed." << std::endl;
+            continue;
+        }
+
+        {
+            std::lock_guard<std::mutex> guard(clients_mutex);
+            clients.push_back(clientSocket);
+        }
 
         std::thread(handleClient, clientSocket).detach();
     }
 
-    WSACleanup();
+    closesocket(serverSocket);
+    cleanupNetwork();
     return 0;
 }
