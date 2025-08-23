@@ -1,0 +1,82 @@
+name: Build and Push Binaries
+
+on:
+  push:
+    branches:
+      - main
+      - test
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Compile server.cpp for Windows
+        run: |
+          mkdir -p bin\windows
+          cl.exe server.cpp /Fe:bin\windows\server.exe /link Ws2_32.lib /SUBSYSTEM:CONSOLE
+
+      - name: Compile client.cpp for Windows
+        run: |
+          cl.exe client.cpp /Fe:bin\windows\client.exe /link Ws2_32.lib /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup
+
+      - name: Upload Windows binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-binaries
+          path: bin/windows/
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Compile server.cpp for Linux
+        run: |
+          mkdir -p bin/linux # 创建 bin/linux 目录
+          # 使用 g++ 编译器编译 server.cpp
+          g++ server.cpp -o bin/linux/server
+
+      - name: Upload Linux binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-binaries
+          path: bin/linux/
+
+  push-binaries:
+    needs: [build-windows, build-linux]
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download Windows binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-binaries
+          path: bin/windows/
+
+      - name: Download Linux binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-binaries
+          path: bin/linux/
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com" # 配置 Git 用户邮箱
+
+      - name: Add and commit binaries
+        run: |
+          git add bin/windows/server.exe
+          git add bin/windows/client.exe
+          git add bin/linux/server
+          git commit -m "[skip ci] Add compiled binaries" || echo "No changes to commit"
+
+      - name: Push changes
+        run: git push
