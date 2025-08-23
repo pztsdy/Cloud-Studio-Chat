@@ -16,7 +16,7 @@ std::mutex clients_mutex;
 std::map<SOCKET, std::pair<std::string, int>> clientInfo; // 存储用户名和 ID
 int nextClientId = 1;                                     // 用于分配唯一 ID
 
-const std::wstring VERSION = L"1.4.0";
+const std::wstring VERSION = L"1.1";
 const std::wstring SERVER_NAME = L"Cloud Studio 聊天室";
 
 // 获取在线人数
@@ -170,29 +170,36 @@ int main()
                               << ", ID: " << client.second.second
                               << ", Socket: " << client.first << std::endl;
                 }
+                continue;
             } else if (cmd.rfind("kick ", 0) == 0) {
                 std::string identifier = cmd.substr(5);
                 kickUser(identifier);
                 std::cout << "Kick command sent for: " << identifier << std::endl;
+                continue;
             } else if (cmd.rfind("adminmsg ", 0) == 0) {
                 std::string msg = cmd.substr(9);
                 sendAdminMessage(msg);
                 std::cout << "Admin message sent." << std::endl;
+                continue;
             } else if (cmd == "helpqwq") {
                 std::cout << "Commands:\n"
                           << "list                  - Show online users\n"
                           << "kick <name|id>        - Kick user by name or id\n"
                           << "adminmsg <message>    - Broadcast admin message\n"
                           << "helpqwq               - Show this help\n"
-                          << "exit                  - Shut down the server\n";
+                          << "exit/quit             - Shut down the server\n";
+                continue;
             } else if (cmd == "exit" || cmd == "quit") {
-                broadcastMessage("Server closed.");
+                broadcastMessage("Server is closed.");
                 std::cout << "Shutting down server..." << std::endl;
                 WSACleanup();
                 exit(0);
-            } else {
-                std::cout << "Unknown command: " << cmd << std::endl;
+                continue;
+            } else if (cmd == "about") {
+                std::wcout << SERVER_NAME << "\nVersion:" << VERSION << std::endl << std::flush;
             }
+            std::cout << "Unknown command: " << cmd << std::endl;
+            
         } })
         .detach();
 
