@@ -20,7 +20,7 @@
 ## 构建说明
 
 ### 先决条件
-- Windows 7及以上（理论上WinXP以上就行，但没有试验过）
+- Windows 7及以上（理论上WinXP以上就行，但没有试验过），如果使用服务端（server）则可以在linux上运行（仅试验过Debian及其衍生Ubuntu）。
 - x64架构的系统
 - C++ 编译器 (例如 GCC, MSVC) (作者的环境是MSYS2 GCC，下载地址：[MSYS2](https://msys2.org)，网上有详细教程，这里就不展开说了。)
 
