@@ -1,50 +1,64 @@
 @echo off
-chcp 65001>nul
+setlocal enabledelayedexpansion
+chcp 936>nul
 
-echo å¼€å§‹ç¼–è¯‘ Cloud Studio Chatï¼Œè¯·ç­‰å€™ã€‚
+echo ¿ªÊ¼±àÒë Cloud Studio Chat£¬ÇëµÈºò¡£
 echo.
-echo è¯·ç¡®ä¿ä½ å·²ç»å®‰è£…äº†Mingwç¼–è¯‘å™¨å¹¶ä¸”æ·»åŠ åˆ°äº†Pathã€‚
+echo ÇëÈ·±£ÄãÒÑ¾­°²×°ÁËMingw±àÒëÆ÷²¢ÇÒÌí¼Óµ½ÁËPath¡£
 
 rem (c) 2025 Piaoztsdy
 
 echo.
-echo ç°åœ¨å¼€å§‹åˆ é™¤ç¼–è¯‘å‰çš„æ–‡ä»¶...
-echo è¯·è¾“å…¥yä»¥ç¡®è®¤åˆ é™¤ã€‚
-set /p confirm=ç¡®è®¤åˆ é™¤å—ï¼Ÿ(y/n)
-if "%confirm%"=="y" (
-    del client.exe -f
-    del server.exe -f
-)
+echo ÏÖÔÚ¿ªÊ¼É¾³ı±àÒëÇ°µÄÎÄ¼ş...
+del client.exe server.exe >nul 2>&1
 
 echo.
-echo ç°åœ¨å¼€å§‹ç¼–è¯‘äºŒè¿›åˆ¶æ–‡ä»¶...
+echo ÏÖÔÚ¿ªÊ¼±àÒë¶ş½øÖÆÎÄ¼ş...
+
+rem ±àÒë client.exe
 g++ client.cpp -o client.exe -mwindows -lws2_32
-g++ server.cpp -o server.exe -mconsole -lws2_32
-
-if exist client.exe (
-    echo client.exe ç¼–è¯‘æˆåŠŸ
+set CLIENT_COMP_STATUS=%errorlevel%
+if !CLIENT_COMP_STATUS! equ 0 (
+    echo client.exe ±àÒë³É¹¦
 ) else (
-    set er=2
-    echo client.exe ç¼–è¯‘å¤±è´¥
+    echo client.exe ±àÒëÊ§°Ü
 )
 
 echo.
 
-if exist server.exe (
-    echo server.exe ç¼–è¯‘æˆåŠŸ
+rem ±àÒë server.exe
+g++ server.cpp -o server.exe -mconsole -lws2_32
+set SERVER_COMP_STATUS=%errorlevel%
+if !SERVER_COMP_STATUS! equ 0 (
+    echo server.exe ±àÒë³É¹¦
 ) else (
-    set er=2
-    echo server.exe ç¼–è¯‘å¤±è´¥
+    echo server.exe ±àÒëÊ§°Ü
 )
 
-if %er% == 2 (
-    echo ç¼–è¯‘è¿‡ç¨‹ä¸­å‡ºç°é”™è¯¯ï¼Œè¯·æŸ¥çœ‹g++çš„æŠ¥é”™ï¼Œå¹¶ä¸”æäº¤issueã€‚
-    echo.
-    echo æäº¤æ ¼å¼ï¼š
-    echo  1. ä½ çš„ç¯å¢ƒ
-    echo   1.1 ä½ çš„ç³»ç»Ÿåç§°ï¼ˆå¦‚ Windows 10ï¼‰
-    echo   1.2 ä½ çš„ç¼–è¯‘å™¨ç‰ˆæœ¬ï¼ˆåœ¨å‘½ä»¤è¡Œè¾“å…¥ g++ --versionï¼‰
-    echo   1.3 ä½ çš„ç³»ç»Ÿæ¶æ„ï¼ˆåªèƒ½ä¸º x64ï¼Œå¦‚æœæ˜¯ x86 æˆ–è€… arm64 åˆ™ä¸å—ç†ï¼‰
-    echo  2. ä½ çš„ g++ æŠ¥é”™å†…å®¹
-    exit /b 1
+echo.
+
+rem Í³Ò»¼ì²é±àÒë½á¹û
+if !CLIENT_COMP_STATUS! neq 0 (
+    set comperr=1
 )
+if !SERVER_COMP_STATUS! neq 0 (
+    set comperr=1
+)
+
+if defined comperr (
+    echo.
+    echo.
+    echo ²¿·Ö´úÂë±àÒë¹ı³ÌÖĞ³öÏÖ´íÎó£¬Çë²é¿´g++µÄ±¨´í£¬²¢ÇÒÌá½»issue¡£
+    echo.
+    echo Ìá½»¸ñÊ½£º
+    echo 1. ÄãµÄ»·¾³
+    echo 1.1 ÄãµÄÏµÍ³Ãû³Æ£¨Èç Windows 10£©
+    echo 1.2 ÄãµÄ±àÒëÆ÷°æ±¾£¨ÔÚÃüÁîĞĞÊäÈë g++ --version£©
+    echo 1.3 ÄãµÄÏµÍ³¼Ü¹¹£¨Ö»ÄÜÎª x64£¬Èç¹ûÊÇ x86 »òÕß arm64 Ôò²»ÊÜÀí£©
+    echo 2. ÄãµÄ g++ ±¨´íÄÚÈİ
+    exit /b 1
+) else (
+    echo È«²¿±àÒë³É¹¦¡£
+)
+
+endlocal
