@@ -17,11 +17,7 @@ jobs:
         with:
           msystem: mingw64
           update: true
-          install: >-
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-toolchain
-            base-devel
-            gcc
+          install: mingw-w64-x86_64-gcc
 
       - name: Compile server.cpp for Windows
         shell: msys2 {0}
