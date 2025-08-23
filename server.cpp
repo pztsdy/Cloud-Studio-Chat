@@ -10,8 +10,6 @@
 #include <algorithm>
 #include <map>
 
-// compile command: g++ server.cpp -o server.exe -lws2_32 -mconsole
-
 #pragma comment(lib, "ws2_32.lib")
 std::vector<SOCKET> clients;
 std::mutex clients_mutex;

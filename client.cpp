@@ -11,9 +11,6 @@
 #define VERSION L"1.10.4"
 const std::wstring client_name = L"Cloud Studio 聊天室";
 
-// IF YOU USE MINGW, PLEASE USE THIS COMMAND
-// g++ client.cpp -o client.exe -lws2_32 -mwindows
-
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(lib, "user32.lib")
