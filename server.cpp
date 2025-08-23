@@ -138,19 +138,18 @@ void handleClient(SOCKET clientSocket)
         {
             listOnlineFriends(clientSocket);
         }
-        else if (message.rfind("/kick ", 0) == 0) // 恢复客户端的 /kick 命令处理
+        else if (message.rfind("/kick ", 0) == 0)
         {
             std::string identifier = message.substr(6);
             kickUser(identifier);
         }
-        else if (message.rfind("/adminmsg ", 0) == 0) // 恢复客户端的 /adminmsg 命令处理
+        else if (message.rfind("/adminmsg ", 0) == 0)
         {
             std::string adminMessage = message.substr(10);
             sendAdminMessage(adminMessage);
         }
         else
         {
-            // 客户端已自行格式化消息，直接广播
             broadcastMessage(message);
         }
     }
