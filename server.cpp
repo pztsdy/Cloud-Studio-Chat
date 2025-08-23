@@ -16,8 +16,8 @@ std::mutex clients_mutex;
 std::map<SOCKET, std::pair<std::string, int>> clientInfo; // 存储用户名和 ID
 int nextClientId = 1;                                     // 用于分配唯一 ID
 
-const std::wstring VERSION = L"1.1";
-const std::wstring SERVER_NAME = L"Cloud Studio 聊天室";
+const std::string VERSION = "1.1";
+const std::string SERVER_NAME = "Cloud Studio Chat";
 
 // 获取在线人数
 int getOnlineFriends()
@@ -187,16 +187,18 @@ int main()
                           << "kick <name|id>        - Kick user by name or id\n"
                           << "adminmsg <message>    - Broadcast admin message\n"
                           << "helpqwq               - Show this help\n"
-                          << "exit/quit             - Shut down the server\n";
+                          << "exit/quit             - Shut down the server\n"
+                          << "about                 - Show about message.\n";
                 continue;
             } else if (cmd == "exit" || cmd == "quit") {
                 broadcastMessage("Server is closed.");
                 std::cout << "Shutting down server..." << std::endl;
                 WSACleanup();
                 exit(0);
+                return 0;
+            } else if (cmd.rfind("about", 0) == 0) {
+                std::cout << SERVER_NAME << "\nVersion:" << VERSION << std::endl << std::flush;
                 continue;
-            } else if (cmd == "about") {
-                std::wcout << SERVER_NAME << "\nVersion:" << VERSION << std::endl << std::flush;
             }
             std::cout << "Unknown command: " << cmd << std::endl;
             
