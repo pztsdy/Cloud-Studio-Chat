@@ -3,8 +3,7 @@ name: Build and Push Binaries
 on:
   push:
     branches:
-      - main
-      - test
+      - master
 jobs:
   build-windows:
     runs-on: windows-latest
