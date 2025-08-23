@@ -16,7 +16,7 @@ echo.
 echo 现在开始编译二进制文件...
 
 rem 编译 client.exe
-g++ client.cpp -o client.exe -mwindows -lws2_32
+g++ client.cpp -o client.exe -mwindows -lws2_32 -static
 set CLIENT_COMP_STATUS=%errorlevel%
 if !CLIENT_COMP_STATUS! equ 0 (
     echo client.exe 编译成功
@@ -27,7 +27,7 @@ if !CLIENT_COMP_STATUS! equ 0 (
 echo.
 
 rem 编译 server.exe
-g++ server.cpp -o server.exe -mconsole -lws2_32
+g++ server.cpp -o server.exe -mconsole -lws2_32 -static
 set SERVER_COMP_STATUS=%errorlevel%
 if !SERVER_COMP_STATUS! equ 0 (
     echo server.exe 编译成功
