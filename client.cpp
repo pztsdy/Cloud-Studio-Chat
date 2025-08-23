@@ -8,7 +8,7 @@
 #include <commctrl.h>
 #include <iostream>
 
-#define VERSION L"1.10.4"
+#define VERSION L"1.1"
 const std::wstring client_name = L"Cloud Studio 聊天室";
 
 #pragma comment(lib, "ws2_32.lib")
@@ -35,6 +35,7 @@ const std::wstring client_name = L"Cloud Studio 聊天室";
 #define ID_MENU_QUIT 112
 #define ID_STATIC_PORT 109
 #define ID_EDIT_PORT 110
+#define ID_UPDATE_LOG 114 // 更改为唯一ID，避免与ID_MENU_PIN冲突
 
 bool isPinned = false;
 HINSTANCE hInst;
@@ -99,12 +100,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         // 创建菜单
         HMENU hMenu = CreateMenu();
         HMENU hHelpMenu = CreatePopupMenu();
-        AppendMenu(hHelpMenu, MF_STRING, ID_MENU_PIN, L"置顶");
-        AppendMenu(hHelpMenu, MF_STRING, ID_MENU_CANCEL_PIN, L"取消置顶");
-        AppendMenu(hHelpMenu, MF_SEPARATOR, 0, NULL);
+        AppendMenu(hMenu, MF_STRING, ID_MENU_PIN, L"置顶");
+        AppendMenu(hMenu, MF_STRING, ID_MENU_CANCEL_PIN, L"取消置顶");
+        
+        AppendMenu(hHelpMenu, MF_STRING, ID_UPDATE_LOG, L"更新日志");
         AppendMenu(hHelpMenu, MF_STRING, ID_MENU_ABOUT, L"关于");
         AppendMenu(hHelpMenu, MF_SEPARATOR, 0, NULL);
         AppendMenu(hHelpMenu, MF_STRING, ID_MENU_QUIT, L"退出");
+        
+        // 将 hHelpMenu 作为弹出菜单添加到主菜单 hMenu
         AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hHelpMenu, L"帮助");
         SetMenu(hwnd, hMenu);
 
@@ -167,6 +171,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         else if (LOWORD(wParam) == ID_MENU_QUIT)
         {
             PostQuitMessage(0);
+        } else if (LOWORD(wParam) == ID_UPDATE_LOG) {
+            // 弹出可复制窗口显示更新日志
+            HWND hLogWnd = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"",
+                                           WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY,
+                                           CW_USEDEFAULT, CW_USEDEFAULT, 400, 300, NULL, NULL, hInst, NULL);
+            SendMessage(hLogWnd, WM_SETFONT, (WPARAM)hFont, TRUE);
+            std::wstring logContent = L"更新日志:\r\n\r\n当前版本: 1.1\r\n更新内容:\r\n - 将指定菜单移动到主菜单位置\r\n - 添加“更新日志”功能\r\n - 修复了一些已知问题，提升兼容性，现理论已经支持 XP 系统";
+            SetWindowText(hLogWnd, logContent.c_str());
         }
         break;
 
