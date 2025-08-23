@@ -9,7 +9,7 @@
 #include <iostream>
 
 #define VERSION L"1.1"
-const std::wstring client_name = L"Cloud Studio 聊天室";
+const std::wstring client_name = L"Cloud Studio Chat";
 
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "comctl32.lib")

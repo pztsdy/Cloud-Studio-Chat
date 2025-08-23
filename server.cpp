@@ -197,11 +197,11 @@ int main()
                 exit(0);
                 return 0;
             } else if (cmd.rfind("about", 0) == 0) {
-                std::cout << SERVER_NAME << "\nVersion:" << VERSION << std::endl << std::flush;
+                std::cout << SERVER_NAME << "\nVersion: " << VERSION << std::endl << std::flush;
                 continue;
             }
-            std::cout << "Unknown command: " << cmd << std::endl;
-            
+            std::cout << "Unknown command: " << cmd << std::endl << "Use 'helpqwq' to view help" << std::endl << std::flush;
+
         } })
         .detach();
 
