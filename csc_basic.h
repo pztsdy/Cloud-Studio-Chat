@@ -35,3 +35,17 @@ void cleanupNetwork();
 #define ID_MENU_QUIT 112
 #define ID_MENU_CANCEL_PIN 113
 #define ID_UPDATE_LOG 114
+
+/// 更新日志
+
+std::wstring logContent = std::wstring(L"更新日志:\r\n")
+    + L"\r\n"
+    + L"当前版本: " + VERSION + L"\r\n\r\n"
+    + L"版本1.2更新内容:\r\n"
+    + L"- 修改功能易于开发\r\n"
+    + L"- 修复了一些已知问题，提升兼容性，现理论已经支持 32 位系统\r\n\r\n"
+    + L"版本1.1更新内容：\r\n"
+    + L"- 移动置顶功能的位置\r\n"
+    + L"- 添加“更新日志”功能\r\n"
+    + L"- 修复了一些已知问题，提升兼容性，现理论已经支持 Windows XP 系统"
+;
