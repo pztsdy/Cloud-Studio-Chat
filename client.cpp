@@ -10,6 +10,7 @@
 
 #define VERSION L"1.2"
 const std::wstring client_name = L"Cloud Studio Chat";
+std::wstring logContent = L"更新日志:\r\n\r\n当前版本: 1.2\r\n更新内容:\r\n- 修改“更新日志”功能易于开发\r\n - 修复了一些已知问题，提升兼容性，现理论已经支持 XP 系统和 32 位系统";
 
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "comctl32.lib")
@@ -177,7 +178,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                                            WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY,
                                            CW_USEDEFAULT, CW_USEDEFAULT, 400, 300, NULL, NULL, hInst, NULL);
             SendMessage(hLogWnd, WM_SETFONT, (WPARAM)hFont, TRUE);
-            std::wstring logContent = L"更新日志:\r\n\r\n当前版本: 1.1\r\n更新内容:\r\n - 将指定菜单移动到主菜单位置\r\n - 添加“更新日志”功能\r\n - 修复了一些已知问题，提升兼容性，现理论已经支持 XP 系统";
             SetWindowText(hLogWnd, logContent.c_str());
         }
         break;
