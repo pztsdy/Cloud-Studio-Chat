@@ -3,13 +3,9 @@
 
 #include <winsock2.h>
 #include <windows.h>
-#include <string>
-#include <thread>
 #include <commctrl.h>
-#include <iostream>
+#include "csc_basic.h"
 
-const std::wstring VERSION = L"1.2";
-const std::wstring client_name = L"Cloud Studio Chat";
 std::wstring logContent = std::wstring(L"更新日志:\r\n")
     + L"\r\n"
     + L"当前版本: " + VERSION + L"\r\n\r\n"

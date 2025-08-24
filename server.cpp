@@ -16,13 +16,7 @@ typedef int SOCKET;
 #define closesocket(s) close(s)
 #endif
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <thread>
-#include <mutex>
-#include <algorithm>
-#include <map>
+#include "csc_basic.h"
 
 // 函数声明
 void broadcastMessage(const std::string &message);
