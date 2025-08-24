@@ -31,9 +31,6 @@ std::mutex clients_mutex;
 std::map<SOCKET, std::pair<std::string, int>> clientInfo; // 存储用户名和 ID
 int nextClientId = 1;                                     // 用于分配唯一 ID
 
-const std::string VERSION = "1.2";
-const std::string SERVER_NAME = "Cloud Studio Chat";
-
 // 获取在线人数
 int getOnlineFriends()
 {
