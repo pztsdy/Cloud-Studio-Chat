@@ -77,12 +77,12 @@ void sendAdminMessage(const std::string &message)
 
 void handleClient(SOCKET clientSocket)
 {
-    char buffer[32768];
+    char buffer[65536];
     int bytesReceived;
 
     std::string username;
     // 首次接收用户名
-    bytesReceived = recv(clientSocket, buffer, 32768, 0);
+    bytesReceived = recv(clientSocket, buffer, 65536, 0);
     if (bytesReceived <= 0)
     {
         closesocket(clientSocket);
@@ -104,7 +104,7 @@ void handleClient(SOCKET clientSocket)
     // 用户进入时在服务端输出，并且广播
     broadcastMessage(username + " has joined.");
 
-    while ((bytesReceived = recv(clientSocket, buffer, 32768, 0)) > 0)
+    while ((bytesReceived = recv(clientSocket, buffer, 65536, 0)) > 0)
     {
         buffer[bytesReceived] = '\0';
         std::string message(buffer);

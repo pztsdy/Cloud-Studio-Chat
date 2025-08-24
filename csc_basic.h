@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <map>
 
+// 全局变量
 const std::wstring VERSION = L"1.2";
 const std::wstring client_name = L"Cloud Studio Chat";
 

@@ -46,9 +46,9 @@ HFONT CreateCustomFont()
 
 void receiveMessages()
 {
-    char buffer[32768];
+    char buffer[65536];
     int bytesReceived;
-    while ((bytesReceived = recv(clientSocket, buffer, 32768, 0)) > 0)
+    while ((bytesReceived = recv(clientSocket, buffer, 65536, 0)) > 0)
     {
         buffer[bytesReceived] = '\0';
         std::string message(buffer);
@@ -112,8 +112,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
         if (LOWORD(wParam) == ID_BUTTON_SEND)
         {
-            char buffer[32768];
-            GetWindowTextA(hEditSend, buffer, 32768);
+            char buffer[65536];
+            GetWindowTextA(hEditSend, buffer, 65536);
             if (strlen(buffer) > 0)
             {
                 std::string msgToSend = "[" + username + "]: " + buffer;
