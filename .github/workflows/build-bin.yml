@@ -84,7 +84,7 @@ jobs:
           git add bin/windows/server.exe
           git add bin/windows/client.exe
           git add bin/linux/server
-          git commit -m "[skip ci] Add compiled binaries" || echo "No changes to commit"
+          git commit -m "[skip ci] [bin] Add compiled binaries" || echo "No changes to commit"
 
       - name: Push changes
         run: git push
