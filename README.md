@@ -34,14 +34,10 @@ git clone https://www.github.com/pztsdy/Cloud-Studio-Chat.git
 cd Cloud-Studio-Chat
 ```
 2.  **编译文件**
-在每个CPP文件中都有备注编译命令，可以根据命令进行编译。
 
-例如：
-```bash
-g++ client.cpp -o client.exe -mwindows -lws2_32
-```
+请用目录下的[compile.bat](compile.bat)文件，直接运行它来进行编译。
 
-你也可以用目录下的[compile.bat](compile.bat)文件，直接运行它来进行编译。
+也可以在bin目录下或者在Release页面里直接下载预编译的二进制文件。
 
 ## 使用方法
 
@@ -65,6 +61,7 @@ g++ client.cpp -o client.exe -mwindows -lws2_32
 ## 贡献
 
 欢迎对本项目进行贡献！如果您有任何建议或发现 Bug，请随时提交 Issue 或 Pull Request。
+**请阅读贡献者指南！**
 
 ## 许可证
 
