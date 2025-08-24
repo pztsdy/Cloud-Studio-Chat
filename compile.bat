@@ -56,9 +56,11 @@ if defined comperr (
     echo 1.2 你的编译器版本（在命令行输入 g++ --version）
     echo 1.3 你的系统架构（只能为 x64，如果是 x86 或者 arm64 则不受理）
     echo 2. 你的 g++ 报错内容
+    pause
     exit /b 1
 ) else (
     echo 全部编译成功。
+    pause
 )
 
 endlocal
