@@ -4,6 +4,8 @@
 #include <winsock2.h>
 #pragma comment(lib, "ws2_32.lib")
 #else
+#warning "This code may not work on Linux or other environments."
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
