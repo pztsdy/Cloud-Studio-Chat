@@ -239,7 +239,7 @@ void runServerCommands()
         }
         else if (cmd.rfind("about", 0) == 0)
         {
-            std::cout << SERVER_NAME << "\nVersion: " << VERSION << std::endl;
+            std::wcout << client_name << std::wstring(L"\nVersion: ") << VERSION << std::endl;
         }
         else if (!cmd.empty())
         {
