@@ -28,22 +28,6 @@ std::wstring logContent = std::wstring(L"更新日志:\r\n")
 // 网络错误：exit(3)
 // 其他错误：exit(4)
 
-// 定义控件ID
-#define ID_EDIT_RECV 101
-#define ID_EDIT_SEND 102
-#define ID_BUTTON_SEND 103
-#define ID_EDIT_USERNAME 104
-#define ID_EDIT_SERVERIP 105
-#define ID_BUTTON_OK 106
-#define ID_BUTTON_CANCEL 107
-#define ID_MENU_PIN 111
-#define ID_MENU_CANCEL_PIN 113
-#define ID_MENU_ABOUT 108
-#define ID_MENU_QUIT 112
-#define ID_STATIC_PORT 109
-#define ID_EDIT_PORT 110
-#define ID_UPDATE_LOG 114 // 更改为唯一ID，避免与ID_MENU_PIN冲突
-
 bool isPinned = false;
 HINSTANCE hInst;
 HWND hEditRecv;

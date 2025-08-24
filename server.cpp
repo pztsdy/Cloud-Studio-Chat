@@ -18,14 +18,6 @@ typedef int SOCKET;
 
 #include "csc_basic.h"
 
-// 函数声明
-void broadcastMessage(const std::string &message);
-void sendAdminMessage(const std::string &message);
-void kickUser(const std::string &identifier);
-void runServerCommands();
-bool initializeNetwork();
-void cleanupNetwork();
-
 std::vector<SOCKET> clients;
 std::mutex clients_mutex;
 std::map<SOCKET, std::pair<std::string, int>> clientInfo; // 存储用户名和 ID
