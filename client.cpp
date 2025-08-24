@@ -7,9 +7,6 @@
 #include "csc_basic.h"
 
 #pragma comment(lib, "ws2_32.lib")
-#pragma comment(lib, "comctl32.lib")
-#pragma comment(lib, "user32.lib")
-#pragma comment(lib, "gdi32.lib")
 
 // 用户端错误：exit(1)
 // 系统类错误：exit(2)
