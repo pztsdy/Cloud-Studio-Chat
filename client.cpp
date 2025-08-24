@@ -8,18 +8,18 @@
 #include <commctrl.h>
 #include <iostream>
 
-#define VERSION L"1.2"
+const std::wstring VERSION = L"1.2";
 const std::wstring client_name = L"Cloud Studio Chat";
 std::wstring logContent = std::wstring(L"更新日志:\r\n")
     + L"\r\n"
-    + L"当前版本: 1.2\r\n"
-    + L"更新内容:\r\n"
+    + L"当前版本: " + VERSION + L"\r\n\r\n"
+    + L"版本1.2更新内容:\r\n"
     + L"- 修改功能易于开发\r\n"
     + L"- 修复了一些已知问题，提升兼容性，现理论已经支持 32 位系统\r\n\r\n"
     + L"版本1.1更新内容：\r\n"
     + L"- 移动置顶功能的位置\r\n"
     + L"- 添加“更新日志”功能\r\n"
-    + L"- 修复了一些已知问题，提升兼容性，现理论已经支持 32 位系统"
+    + L"- 修复了一些已知问题，提升兼容性，现理论已经支持 Windows XP 系统"
 ;
 
 #pragma comment(lib, "ws2_32.lib")
@@ -184,9 +184,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             PostQuitMessage(0);
         } else if (LOWORD(wParam) == ID_UPDATE_LOG) {
             // 弹出可复制窗口显示更新日志
-            HWND hLogWnd = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"",
-                                           WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY,
-                                           CW_USEDEFAULT, CW_USEDEFAULT, 400, 300, NULL, NULL, hInst, NULL);
+            HWND hLogWnd = CreateWindowExW(
+                WS_EX_CLIENTEDGE, L"EDIT", L"更新日志",
+                WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY,
+                CW_USEDEFAULT, CW_USEDEFAULT, 450, 350, NULL, NULL, hInst, NULL);
             SendMessage(hLogWnd, WM_SETFONT, (WPARAM)hFont, TRUE);
             SetWindowText(hLogWnd, logContent.c_str());
         }
