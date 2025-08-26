@@ -1,6 +1,8 @@
 # 通知：
 为了美化界面，增强兼容性，本项目近日可能只有少量更新，其余时间用于进行新UI实验，届时将使用 Electron 框架（也就是现在的QQNT采用的框架）进行重构。望悉知。**所以近日请不要催促我更新，但是有Issue我也会尽快处理。**
 
+新的项目将创建在我的组织[Cloud Studio 2022](https://www.github.com/orgs/Cloud-Studio-2022)中。
+
 ---
 ---
 # Cloud Studio Chat
